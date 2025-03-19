@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Legend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Font for a futuristic action style -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .navbar-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem; /* slightly smaller */
+    }
+    .navbar-nav .nav-link {
+      font-size: 0.85rem;
+    }
+    /* Search bar styles */
+    #searchBarContainer {
+      display: none;
+      background: #343a40;
+      padding: 10px 15px;
+    }
+    #searchBarContainer input {
+      border-radius: 0;
+      border: none;
+      padding: 8px 12px;
+      width: 100%;
+    }
+    /* Adjust search icon style */
+    .search-icon {
+      font-size: 1.25rem;
+      color: #fff;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar with Brand on left and right-side group (hamburger first, then search icon) -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-0">
+    <div class="container d-flex align-items-center">
+      <a class="navbar-brand" href="#">Legend</a>
+      <div class="d-flex ms-auto flex-row-reverse align-items-center">
+        <!-- Hamburger Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" 
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Search Icon -->
+        <i class="bi bi-search search-icon" id="toggleSearch"></i>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto">
+          <!-- Existing modals -->
+          <li class="nav-item me-2">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#generateModal">Generate Key</a>
+          </li>
+          <li class="nav-item me-2">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#manageModal">Manage Keys</a>
+          </li>
+          <!-- New Update Script option -->
+          <li class="nav-item me-2">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#updateModal">Update Script</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Search Bar (hidden by default) -->
+  <div id="searchBarContainer">
+    <div class="container">
+      <input type="text" id="searchInput" placeholder="Search keys..." />
+    </div>
+  </div>
+  
+  <!-- Home Section: Display Generated Keys -->
+  <div class="container my-4">
+    <div class="card mb-4">
+      <div class="card-header bg-secondary text-white">
+        All Generated Keys
+      </div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Keys Overview</h5>
+          <button class="btn btn-outline-light" id="refreshKeys">Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered" id="keysTable">
+            <thead class="table-dark">
+              <tr>
+                <th>Game Name</th>
+                <th>Key</th>
+                <th>Device Limit</th>
+                <th>Expiry</th>
+                <th>Blocked</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data dynamically inserted -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Generate Key Modal -->
+  <div class="modal fade" id="generateModal" tabindex="-1" aria-labelledby="generateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="generateModalLabel">Generate New Key</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="generateForm">
+            <div class="mb-3">
+              <label for="gameName" class="form-label">Game Name</label>
+              <select class="form-select" id="gameName" required>
+                <option value="Free Fire">Free Fire</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="keyInput" class="form-label">Key</label>
+              <input type="text" class="form-control" id="keyInput" placeholder="Enter custom key" required>
+            </div>
+            <div class="mb-3">
+              <label for="deviceLimit" class="form-label">Device Limit</label>
+              <select class="form-select" id="deviceLimit" required>
+                <option value="1">1</option>
+                <option value="99">99</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="expiryDays" class="form-label">Expiry (Days)</label>
+              <input type="number" class="form-control" id="expiryDays" placeholder="Enter number of days" min="1">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Generate Key</button>
+          </form>
+          <div id="generateMsg" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Manage Keys Modal -->
+  <div class="modal fade" id="manageModal" tabindex="-1" aria-labelledby="manageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="manageModalLabel">Manage Keys</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="manageForm">
+            <div class="mb-3">
+              <label for="manageKeyInput" class="form-label">Key</label>
+              <input type="text" class="form-control" id="manageKeyInput" placeholder="Enter key" required>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-danger" id="deleteBtn">Delete Key</button>
+              <button type="button" class="btn btn-warning" id="blockBtn">Block Key</button>
+              <button type="button" class="btn btn-success" id="unblockBtn">Unblock Key</button>
+            </div>
+          </form>
+          <div id="manageMsg" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Update Script Modal -->
+  <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateModalLabel">Update Client Script</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="updateForm">
+            <div class="mb-3">
+              <label for="scriptContent" class="form-label">New Script Content</label>
+              <textarea class="form-control" id="scriptContent" rows="10" placeholder="Paste your new script here"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Update Script</button>
+          </form>
+          <div id="updateMsg" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Axios for HTTP Requests -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  
+  <script>
+    const apiUrl = 'http://69.197.134.74:8090'; // Update as needed
+
+    // Load keys from backend and update table
+    async function loadKeys() {
+      try {
+        const response = await axios.get(`${apiUrl}/keys`);
+        const keys = response.data;
+        const tbody = document.querySelector('#keysTable tbody');
+        tbody.innerHTML = '';
+        keys.forEach(key => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${key.gameName}</td>
+            <td>${key.key}</td>
+            <td>${key.deviceLimit}</td>
+            <td>${new Date(key.expiry).toLocaleString()}</td>
+            <td>${key.blocked ? 'Yes' : 'No'}</td>
+            <td>${new Date(key.createdAt).toLocaleString()}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Error fetching keys:', err);
+      }
+    }
+    
+    // Filter table rows based on search input
+    function filterKeys(searchTerm) {
+      const rows = document.querySelectorAll('#keysTable tbody tr');
+      rows.forEach(row => {
+        const keyText = row.cells[1].textContent.toLowerCase();
+        row.style.display = keyText.includes(searchTerm.toLowerCase()) ? '' : 'none';
+      });
+    }
+    
+    // Toggle search bar display
+    document.getElementById('toggleSearch').addEventListener('click', (e) => {
+      e.preventDefault();
+      const searchBar = document.getElementById('searchBarContainer');
+      if (searchBar.style.display === 'none' || searchBar.style.display === '') {
+        searchBar.style.display = 'block';
+        document.getElementById('searchInput').focus();
+      } else {
+        searchBar.style.display = 'none';
+      }
+    });
+    
+    // Search input event listener
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      filterKeys(e.target.value);
+    });
+    
+    // Handle Generate Key form submission
+    document.getElementById('generateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const gameName = document.getElementById('gameName').value;
+      const key = document.getElementById('keyInput').value;
+      const deviceLimit = parseInt(document.getElementById('deviceLimit').value, 10);
+      const expiryDays = parseInt(document.getElementById('expiryDays').value, 10);
+      
+      // Calculate expiry date if provided
+      let expiryDate = expiryDays > 0 ? new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000) : null;
+      
+      try {
+        const res = await axios.post(`${apiUrl}/generate`, {
+          key, gameName, deviceLimit, expiry: expiryDate
+        });
+        document.getElementById('generateMsg').innerHTML = `<div class="alert alert-success">${res.data.message}</div>`;
+        loadKeys();
+      } catch (error) {
+        document.getElementById('generateMsg').innerHTML = `<div class="alert alert-danger">${error.response?.data.error || 'Error generating key.'}</div>`;
+      }
+    });
+    
+    // Handle Delete Key button
+    document.getElementById('deleteBtn').addEventListener('click', async () => {
+      const key = document.getElementById('manageKeyInput').value;
+      try {
+        const res = await axios.delete(`${apiUrl}/key/${key}`);
+        document.getElementById('manageMsg').innerHTML = `<div class="alert alert-success">${res.data.message}</div>`;
+        loadKeys();
+      } catch (error) {
+        document.getElementById('manageMsg').innerHTML = `<div class="alert alert-danger">${error.response?.data.error || 'Error deleting key.'}</div>`;
+      }
+    });
+    
+    // Handle Block Key button
+    document.getElementById('blockBtn').addEventListener('click', async () => {
+      const key = document.getElementById('manageKeyInput').value;
+      try {
+        const res = await axios.post(`${apiUrl}/block`, { key });
+        document.getElementById('manageMsg').innerHTML = `<div class="alert alert-success">${res.data.message}</div>`;
+        loadKeys();
+      } catch (error) {
+        document.getElementById('manageMsg').innerHTML = `<div class="alert alert-danger">${error.response?.data.error || 'Error blocking key.'}</div>`;
+      }
+    });
+    
+    // Handle Unblock Key button
+    document.getElementById('unblockBtn').addEventListener('click', async () => {
+      const key = document.getElementById('manageKeyInput').value;
+      try {
+        const res = await axios.post(`${apiUrl}/unblock`, { key });
+        document.getElementById('manageMsg').innerHTML = `<div class="alert alert-success">${res.data.message}</div>`;
+        loadKeys();
+      } catch (error) {
+        document.getElementById('manageMsg').innerHTML = `<div class="alert alert-danger">${error.response?.data.error || 'Error unblocking key.'}</div>`;
+      }
+    });
+    
+    // Handle Update Script form submission
+    document.getElementById('updateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newScript = document.getElementById('scriptContent').value;
+      if (!newScript || newScript.trim() === "") {
+        document.getElementById('updateMsg').innerHTML = `<div class="alert alert-danger">Please enter script content.</div>`;
+        return;
+      }
+      try {
+        const res = await axios.post(`${apiUrl}/updateScript`, { newScript });
+        document.getElementById('updateMsg').innerHTML = `<div class="alert alert-success">${res.data.message}</div>`;
+      } catch (error) {
+        document.getElementById('updateMsg').innerHTML = `<div class="alert alert-danger">${error.response?.data.error || 'Error updating script.'}</div>`;
+      }
+    });
+    
+    // Refresh button event
+    document.getElementById('refreshKeys').addEventListener('click', loadKeys);
+    
+    // Initial load of keys
+    loadKeys();
+  </script>
+</body>
+</html>
